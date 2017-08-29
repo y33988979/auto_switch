@@ -1,0 +1,67 @@
+rmmod  ufsd
+rmmod  ohci-hcd
+rmmod  ehci-hcd
+rmmod png
+rmmod jpge
+rmmod jpeg
+rmmod hi_wdg
+rmmod hi_keyled
+rmmod hi_e2prom
+rmmod hi_cipher
+rmmod hi_ir
+rmmod hi_sci
+rmmod hifb
+rmmod hi_tuner
+rmmod hi_svdec.ko
+rmmod hi_mpi
+rmmod hi_ndpt
+rmmod hi_otp
+rmmod tde
+#rmmod hi_usbprotected
+rmmod hi_i2c
+rmmod hi_gpioi2c
+rmmod hi_gpio
+rmmod hi_dmac
+rmmod hi_c51
+rmmod hi_common
+rmmod hi_mmz
+rmmod hi_media
+insmod hi_mmz.ko
+insmod hi_common.ko
+insmod hi_c51.ko
+insmod hi_dmac.ko
+insmod hi_gpio.ko
+insmod hi_gpioi2c.ko gpioidclock=11 clockbit=3 gpioiddata=12 databit=5 i2cmode=2
+insmod hi_i2c.ko
+#insmod hi_usbprotected.ko Usb0PwrEn=63 Usb0Ovrcur=65 Usb0IntType=1
+insmod tde.ko
+insmod hi_otp.ko
+insmod hi_ndpt.ko
+insmod hi_mpi.ko
+insmod hi_svdec.ko
+insmod hi_tuner.ko
+# about hifb: for 1920*1080, Triple buffer,ARGB8888 format, use:
+  insmod hifb.ko video="hifb:vram2_size:16200"
+# for 1280*720, use:
+# insmod hifb.ko video="hifb:vram0_size:2430, vram2_size:7200" 
+# insmod hifb.ko with no args will use defaule value: for 1280*720,
+# and vram0_size:2430, vram2_size:7200
+# vram0 is for SD and vram2 is for HD.  size is calculate like this:
+# vram2_size = (1920*1080*4*2/1024)K; vram0_size = (720*576*2*2/1024)K 
+# insmod hifb.ko
+insmod hi_sci.ko
+insmod hi_ir.ko freq=28
+insmod hi_cipher.ko
+insmod hi_e2prom.ko
+insmod hi_keyled.ko
+insmod hi_wdg.ko
+insmod jpeg.ko
+insmod jpge.ko
+insmod png.ko
+insmod  /kmod/usb/ehci-hcd.ko
+insmod  /kmod/usb/ohci-hcd.ko
+echo 3 > /proc/sys/vm/dirty_ratio
+insmod  ufsd.ko
+#himm 0x101f5034 0x00017050
+echo 1 > /proc/sys/vm/overcommit_memory
+echo 8192 > /proc/sys/vm/min_free_kbytes

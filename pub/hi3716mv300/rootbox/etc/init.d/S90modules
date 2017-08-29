@@ -1,0 +1,6 @@
+#!/bin/sh
+
+telnetd&
+cd /kmod
+./load
+cd -

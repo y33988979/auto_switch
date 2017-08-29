@@ -1,0 +1,2 @@
+#! /bin/sh
+insmod /kmod/ddr3_reboot_loader.ko bin_file=/kmod/boot

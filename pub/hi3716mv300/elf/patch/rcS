@@ -1,0 +1,36 @@
+#! /bin/sh
+
+echo "
+            _ _ _ _ _ _ _ _ _ _ _ _
+            \  _  _   _  _ _ ___
+            / /__/ \ |_/
+           / __   /  -  _ ___
+          / /  / /  / /
+  _ _ _ _/ /  /  \_/  \_ ______
+___________\___\__________________
+"
+# Mount fs accroding to /etc/fstab 
+mount -a
+
+# Configuring dynamic linker
+echo "Configuring dynamic linker:"
+ldconfig -C /tmp/ld.so.cache
+
+for initscript in /etc/init.d/S[0-9][0-9]*
+do
+	if [ -x $initscript ] ;
+	then
+		echo "[RCS]: $initscript"
+		$initscript
+	fi
+done
+## FlashData
+#需要配合bootargs使用
+mount -t yaffs2 /dev/mtdblock7 /root/HI3716
+mount -t yaffs2 /dev/mtdblock8 /FlashData
+
+/bin/echo > /dev/mdev.seq
+echo /sbin/mdev > /proc/sys/kernel/hotplug
+/sbin/mdev -s
+echo "123123123"
+

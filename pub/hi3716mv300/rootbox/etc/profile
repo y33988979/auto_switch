@@ -1,0 +1,40 @@
+# /etc/profile: system-wide .profile file for the Bourne shells
+#
+#
+
+export PATH="/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib"
+
+#ulimit -s 1024
+#ulimit -c unlimited
+
+# ANSI COLORS
+CRE="
+[K"
+NORMAL="[0;39m"
+RED="[1;31m"
+GREEN="[1;32m"
+YELLOW="[1;33m"
+BLUE="[1;34m"
+MAGENTA="[1;35m"
+CYAN="[1;36m"
+WHITE="[1;37m"
+
+umask 022
+
+echo "${GREEN}Welcome to HiLinux.${NORMAL}"
+
+## nfs
+#echo "Entering nfs working directory"
+#ifconfig eth0 192.168.1.120 netmask 255.255.255.0;route add default gw 192.168.1.1;
+#mount -t nfs -o nolock -o tcp 192.168.1.110:/root/Share/ZheJiangSW_HuaShu_Hi3716M_ipanel /mnt
+#export LD_LIBRARY_PATH="/mnt/rootfs_full/usr/lib:$LD_LIBRARY_PATH"
+#cd /mnt/ysstb
+#./gdb ysapp.exe
+
+## fs
+echo "Entering fs working directory"
+cd /root/HI3716/                    
+./autorun                                
+       
+

@@ -1,0 +1,3 @@
+bootargs=mem=96M console=ttyAMA0,115200 root=/dev/mtdblock9 rootfstype=yaffs2 mmz=ddr,0,0x86000000,160M LogBufSize=0x80000 DmxPoolBufSize=0x200000
+mtdparts=hi_sfc:1M(fastboot),1m(bootargs),1m(bootargsbak),64k(stbid),64k(loaderdb),64k(loaderdbbak),-(others);hinand:8m(loader),8m(loaderbak),7m(kernel),60m(rootfs),256m(app),7m(fastplay),-(others)
+	

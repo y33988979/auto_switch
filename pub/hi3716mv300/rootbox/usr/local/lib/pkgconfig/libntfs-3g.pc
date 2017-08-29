@@ -1,0 +1,10 @@
+prefix=/home/wrwei/work/3716SDK0A1_R185/pub/hi3716mv300/rootbox/usr/local
+exec_prefix=/home/wrwei/work/3716SDK0A1_R185/pub/hi3716mv300/rootbox/usr/local
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libntfs-3g
+Description: NTFS-3G Read/Write Driver Library
+Version: 2013.1.13
+Cflags: -I${includedir}
+Libs:  -lpthread -L${libdir} -lntfs-3g
