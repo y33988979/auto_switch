@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="GB2312" ?>
+<Partition_Info>
+    <Part Sel="1" PartitionName="fastboot" FlashType="Nand" FileSystem="None" Start="0K" Length="768K" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\hiboot_0x656_0x274_ZJSW.bin" />
+    <Part Sel="1" PartitionName="bootargs" FlashType="Nand" FileSystem="None" Start="768K" Length="256K" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\bootargs_0x656_0x274_ZJSW.bin" />
+    <Part Sel="1" PartitionName="stbinfo" FlashType="Nand" FileSystem="None" Start="1M" Length="1M" SelectFile="" />
+    <Part Sel="1" PartitionName="loader" FlashType="Nand" FileSystem="None" Start="2M" Length="8M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\hiloader_0x656_0x274_ZJSW.bin" />
+    <Part Sel="1" PartitionName="loaderbak" FlashType="Nand" FileSystem="None" Start="10M" Length="8M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\hiloader_0x656_0x274_ZJSW.bin" />
+    <Part Sel="1" PartitionName="kernel" FlashType="Nand" FileSystem="None" Start="18M" Length="5M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\HI3716MV300_kernel_0x106.bin" />
+    <Part Sel="1" PartitionName="rootfs" FlashType="Nand" FileSystem="Yaffs" Start="23M" Length="45M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\HI3716MV300_rootfs_0x656_0x107.yaffs2" />
+    <Part Sel="1" PartitionName="elf" FlashType="Nand" FileSystem="Yaffs" Start="68M" Length="48M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\HI3716MV300_stdver_0x656_0x105.yaffs2" />
+    <Part Sel="1" PartitionName="flashdata" FlashType="Nand" FileSystem="None" Start="116M" Length="8M" SelectFile="" />
+    <Part Sel="1" PartitionName="baseparam" FlashType="Nand" FileSystem="None" Start="124M" Length="256K" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\jzbaseparam1080i50.bin" />
+    <Part Sel="1" PartitionName="logo" FlashType="Nand" FileSystem="None" Start="127232K" Length="2M" SelectFile="C:\Documents and Settings\Administrator\桌面\Burn\ZheJiangSW_OTT\jzlogo1920x1080.bin" />
+    <Part Sel="1" PartitionName="fastplay" FlashType="Nand" FileSystem="None" Start="129280K" Length="1M" SelectFile="" />
+    <Part Sel="1" PartitionName="others" FlashType="Nand" FileSystem="None" Start="130304K" Length="0K" SelectFile="" />
+</Partition_Info>
