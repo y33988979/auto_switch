@@ -44,7 +44,7 @@ rom: app
 	$(MKYAFFS2) $(ELF_PATH) $(IMAGE_PATH)/app.yaffs2 2k 1bit
 
 clean:
-	-rm $(IMAGE_PATH)/* -rf
+	-rm $(IMAGE_PATH)/*.yaffs2 -rf
 	make -C src clean
 
 	

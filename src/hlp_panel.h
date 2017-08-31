@@ -157,6 +157,7 @@ struct hlp_panel_menu
 
 void panel_led_show_string(U8 *string);
 void panel_led_show_number(U32 number);
+void panel_led_show_default_enable(U32 isEnable, U32 sec);
 void hlp_panel_callback_enable(PanelCallback callback);
 S32 hlp_panel_init();
 

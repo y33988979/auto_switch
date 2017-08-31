@@ -22,14 +22,22 @@ static U32 auto_test_start = 0;
 
 S32 hlp_switch_task_start()
 {   
+    S32 mount_ok;
+    S32 config_ok;
+    
     if(auto_test_start == HLP_TRUE) {
         HLP_INFO(HLP_MOD_SWITCH, "test have already start!");
         return 0;
     }
+
+    panel_led_show_default_enable(HLP_TRUE, 8);
     
-    S32 mount_ok = hlp_udisk_mount_ok();
-    S32 config_ok = hlp_config_is_ok();
+    mount_ok = hlp_udisk_mount_ok();
+    config_ok = hlp_config_is_ok();
+    if(mount_ok && !config_ok)
+        udisk_plugin_handle();
     
+    config_ok = hlp_config_is_ok();
     if(mount_ok && config_ok) {
         auto_test_start = HLP_TRUE;
     	g_switch_task.start_time = hlp_time_ms();
@@ -67,7 +75,8 @@ S32 hlp_switch_task_stop()
         HLP_INFO(HLP_MOD_SWITCH, "test have already stop!");
         return 0;
     }
-    
+
+    panel_led_show_default_enable(HLP_FALSE, 0);
 	auto_test_start = HLP_FALSE;
     hlp_serial_capture_stop();
 	g_switch_task.end_time = hlp_time_ms();
@@ -141,7 +150,7 @@ void* hlp_switch_thread(void *args)
             panel_led_show_number(++switch_task->current_count);
             hlp_switch_once_stop(config);
             if(!keyword_is_detected()) {
-                hlp_buzzer_ring_ms(200);
+                hlp_buzzer_ring_ms(1000);
                 hlp_switch_task_stop();
                 HLP_ERROR(HLP_MOD_SWITCH, "test stop, becase no keyword[%s]!", config->keyword);
                 continue;
@@ -151,6 +160,7 @@ void* hlp_switch_thread(void *args)
             if(switch_task->current_count == config->total_count)
             {
                 hlp_power_switch_off();
+                hlp_buzzer_ring_ms(300);
                 hlp_switch_task_stop();
                 heartbeat_drop_count = 0;
                 HLP_INFO(HLP_MOD_SWITCH, "hlp_switch_task_stop! total_count=%d", config->total_count);
@@ -199,7 +209,7 @@ void* hlp_switch_thread(void *args)
 		}
 
 		/* led flashing */
-		help_led_flashing();
+		//help_led_flashing();
 
 		sleep(1);
 	}

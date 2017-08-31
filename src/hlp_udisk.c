@@ -105,8 +105,10 @@ S32 udisk_mount_handle()
     /* create log directory for serail data save */
     sprintf(dir_path, "%s/%s", mount_path, HLP_LOG_DIR);
     ret = hlp_mkdir(dir_path);
-    if(ret < 0)
+    if(ret < 0) {
+        panel_led_show_string("Erro");
         return -1;
+    }
 
     /* short ring.. hint success */
     hlp_operation_success();
@@ -114,8 +116,10 @@ S32 udisk_mount_handle()
     /* load config */
     sprintf(file_path, "%s/%s", mount_path, HLP_CONFIG_NAME);
     ret = hlp_config_load(file_path);
-    if(ret < 0)
+    if(ret < 0) {
+        panel_led_show_string("Erro");
         return -1;
+    }
 
     /* check config */
     if(hlp_config_is_ok()) {
@@ -134,32 +138,34 @@ void udisk_plugout_handle()
     HLP_INFO(HLP_MOD_UDISK, "usb is plugout!");
 }
 
-void udisk_plugin_handle()
+S32 udisk_plugin_handle()
 {
     U32 mount_ok = 0;
     U32 cnt = 5;
 
-    HLP_INFO(HLP_MOD_UDISK, "usb is plugin! mount check...");
+    HLP_INFO(HLP_MOD_UDISK, "usb plugin check, mount check...");
     /* wait udisk mount.. */
     while(cnt--) {
-        usleep(1000*1000);
         if(hlp_udisk_mount_ok()) {
             mount_ok = 1;
             break;
         }
+        usleep(1000*1000);
     }
 
     if(mount_ok) {
         HLP_INFO(HLP_MOD_UDISK, "\nudisk is mounted!");
         udisk_mount_handle();
+        return 0;
     }
     else {
         /* unmounted */
         HLP_ERROR(HLP_MOD_UDISK, "\nudisk is unmounted!");
         panel_led_show_string("Erro");
         hlp_operation_failed();
+        return -1;
     }
-    
+    return -1;
 }
 
 void udisk_thread(void* args)
@@ -205,8 +211,12 @@ S32 hlp_udisk_init()
 {
     pthread_t udisk_tid;
 
-    if(hlp_udisk_mount_ok())
-        udisk_mount_handle();
+    if(udisk_plugin_handle() == 0) {
+        HLP_INFO(HLP_MOD_UDISK, "udisk is detected!");
+    }
+    else {
+        HLP_INFO(HLP_MOD_UDISK, "udisk check failed!");
+    }
 
     if(pthread_create(&udisk_tid, NULL, (void*)udisk_thread, NULL) < 0){
         HLP_ERROR(HLP_MOD_UDISK, "udisk_thread create error! errno=%d:%s", errno, strerror(errno));

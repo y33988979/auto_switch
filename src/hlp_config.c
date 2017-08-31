@@ -22,23 +22,28 @@ S32 hlp_config_print()
 S32 hlp_config_is_ok()
 {
     S32 ret = 1;
+    S32 len;
     if(g_hlp_conf.poweron_duration <= 5
         || g_hlp_conf.poweron_duration > 120) {
-        ret = 0;
         HLP_ERROR(HLP_MOD_CONFIG, "poweron_duration[%d] must be [10~120]!", \
             g_hlp_conf.poweron_duration);
-    }
-        
-    if(g_hlp_conf.interval_time <= 3
-        || g_hlp_conf.interval_time > 30) {
-        ret = 0;
-        HLP_ERROR(HLP_MOD_CONFIG, "interval_time[%d] must be [3~30]!", \
-            g_hlp_conf.poweron_duration);
+        return 0;
     }
 
-    if(g_hlp_conf.keyword)
-        
-    return ret;
+    if(g_hlp_conf.interval_time <= 3
+        || g_hlp_conf.interval_time > 30) {
+        HLP_ERROR(HLP_MOD_CONFIG, "interval_time[%d] must be [3~30]!", \
+            g_hlp_conf.poweron_duration);
+        return 0;
+    }
+
+    len = strlen(g_hlp_conf.keyword);
+    if(len<=0 && len>20)
+        return 0;
+
+    g_hlp_conf.isInit = 1;
+    
+    return 1;
 }
 
 S32 hlp_config_set_mount_path(S8 *mount_path)
@@ -64,15 +69,15 @@ S32 hlp_config_load(S8 *conf_file)
     FILE *fp = NULL;
 
     //hlp_config_init();
-    
+
     fp = fopen(conf_file, "r");
     if(fp == NULL) {
         HLP_ERROR(HLP_MOD_CONFIG, "fopen error! errno=%d:%s", errno, strerror(errno));
 		return -1;
     }
-    
+
     while(n--) {
-        
+
         memset(buffer, 0, sizeof(buffer));
         if(fgets(buffer, sizeof(buffer), fp)) {
             sscanf(buffer, "%s %d", option, &value);

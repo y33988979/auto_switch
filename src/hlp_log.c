@@ -93,6 +93,7 @@ hlp_s32_t hlp_log_file_judge(hlp_u8_t *filename)
 
 	hlp_strcpy(filename, tmpfilename);
     printf("the new log filename=%s, No=%d.\n", filename, file_num);
+    hlp_msleep(200);
 
 	return 0;
 }

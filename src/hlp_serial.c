@@ -141,6 +141,7 @@ void* serial_thread(void *args)
 {
     S32   found = 0;
     S32   len = 0;
+    S32   total_len = 0;
     U32   logfile_id = 0;
     S8    buffer[2048];
     S8    filename[128];
@@ -152,6 +153,7 @@ void* serial_thread(void *args)
         
         if(capture_start == 0) {
             logfile_id = 1;
+            total_len = 0;
             if(logfile) {
                 hlp_logfile_fsync(logfile);
                 hlp_logfile_destory(logfile);
@@ -186,7 +188,9 @@ void* serial_thread(void *args)
             usleep(200*1000);
             continue;
         }
+        total_len += len;
         serial_buffer_put(buffer, len);
+        help_led_flashing();
         
         //printf("serial buffer=%s\n", buffer);
         #if 0

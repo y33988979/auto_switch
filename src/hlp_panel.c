@@ -29,8 +29,10 @@ hlp_u32_t  panel_last_key_time = 0;
 
 static HI_UNF_KEYLED_TIME_S stLedTime = {0};
 static U8 mLedData[4] = {0};
-static U32 gLedUpdate = HLP_FALSE;;
-static U32 gLedDisplayTime = HLP_FALSE;;
+static U32 gLedUpdate = HLP_FALSE;
+static U32 gLedDisplayDefault = HLP_TRUE;
+static U32 gLedDisplayDefaultTime = 8;
+static U32 gLedDisplayTime = HLP_FALSE;
 
 static void hlp_panel_callback(U32 Key);
 PanelCallback fPanelCallback = hlp_panel_callback;
@@ -294,6 +296,12 @@ void panel_led_show_time(U32 hour, U32 min)
     stLedTime.u32Minute = min;
 }
 
+void panel_led_show_default_enable(U32 isEnable, U32 sec)
+{
+    gLedDisplayDefault = isEnable;
+    if(isEnable)
+        gLedDisplayDefaultTime = sec>10?10:sec;
+}
 static void hlp_exit_test()
 {
 	hlp_u8_t index = panel_last_index;
@@ -384,16 +392,20 @@ void* led_display_task(void *args)
                 break;
             }
             gLedUpdate = HLP_FALSE;
-            display_timeout = 50;
+            display_timeout = gLedDisplayDefaultTime*10;
             
         }else {
-            usleep(100*1000);
+            
             if(display_timeout == 0)
                 continue;
-            if(display_timeout-- == 1) {
-                HI_UNF_LED_Display(0x02020202);
-            } 
+            
+            if(gLedDisplayDefault){
+                if(display_timeout-- == 1) {
+                    HI_UNF_LED_Display(0x02020202); //show string is "----"
+                } 
+            }
         }
+        usleep(100*1000);
     }
 
     return NULL;
@@ -502,7 +514,8 @@ S32 hlp_panel_init()
         HLP_ERROR(HLP_MOD_PANEL, "led_display_task create error! errno=%d:%s", errno, strerror(errno));
 		return -1;
 	}
-    
+
+    panel_led_show_string("----");
     HLP_INFO(HLP_MOD_PANEL, "led_display_task start success!");
 
 	return ret;

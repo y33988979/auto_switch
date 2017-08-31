@@ -2,7 +2,7 @@
  * Copyright (C) ychen
  * Copyright (C) Jiuzhou, Inc.
  */
- 
+
 
 
 #include <hlp_common.h>
@@ -96,7 +96,7 @@ void hlp_msleep(hlp_u32_t Delay)
     else
     {
         x.tv_sec  = Delay / 1000;
-        x.tv_nsec = (Delay % 1000) * 1000000; 
+        x.tv_nsec = (Delay % 1000) * 1000000;
     }
     nanosleep (&x, 0);
 }
@@ -112,7 +112,7 @@ hlp_s32_t hlp_get_dir_file_num(hlp_s8_t *path)
         HLP_ERROR(HLP_MOD_COMMON, "scandir error! path[%s], errno=%d:%s", path, errno, strerror(errno));
 		return -1;
 	}
-	else 
+	else
 		return n;
 }
 
@@ -126,9 +126,9 @@ hlp_bool_t hlp_file_isexist(hlp_s8_t *path, hlp_s8_t *filename)
 	{
         HLP_ERROR(HLP_MOD_COMMON, "scandir error! path[%s], errno=%d:%s", path, errno, strerror(errno));
 	}
-	else 
+	else
 	{
-		while (n--) 
+		while (n--)
 		{
             //HLP_INFO(HLP_MOD_COMMON, "pathname:[%s]", namelist[n]->d_name);
 			if(hlp_strcmp(namelist[n]->d_name, filename) == 0)
@@ -154,7 +154,7 @@ S32 hlp_mkdir2(S8 *path)
     }
 
     HLP_INFO(HLP_MOD_COMMON, "mkdir %s !", path);
-    
+
     return 0;
 }
 
@@ -167,19 +167,19 @@ S32 hlp_rmdir2(S8 *path)
         HLP_ERROR(HLP_MOD_COMMON, "rmdir %s error! errno=%d:%s", path, errno, strerror(errno));
         return -1;
     }
-    
+
     HLP_INFO(HLP_MOD_COMMON, "rmdir %s !", path);
-    
+
     return 0;
 }
 
 S32 hlp_mkdir(S8 *path)
 {
     S8 command[128] = {0};
-    
+
     if(access(path, F_OK) == 0)
         return 0;
-    
+
     sprintf(command, "mkdir -p %s", path);
     if(system(command) == -1) {
         HLP_ERROR(HLP_MOD_COMMON, "mkdir %s error! errno=%d:%s", path, errno, strerror(errno));
@@ -187,14 +187,14 @@ S32 hlp_mkdir(S8 *path)
     }
 
     HLP_INFO(HLP_MOD_COMMON, "mkdir -p %s !", path);
-    
+
     return 0;
 }
 
 S32 hlp_rmdir(S8 *path)
 {
     S8 command[128] = {0};
-    
+
     if(access(path, F_OK) != 0)
         return 0;
 
@@ -205,7 +205,7 @@ S32 hlp_rmdir(S8 *path)
     }
 
     HLP_INFO(HLP_MOD_COMMON, "rm -rf %s/* !", path);
-    
+
     return 0;
 }
 
@@ -235,7 +235,7 @@ S32 rootfs_add_files()
     HLP_INFO(HLP_MOD_COMMON, "add file --> /sbin/automount.sh");
     return 0;
 }
-    
+
 S32 rootfs_replace_rcS()
 {
     S32 fd;
@@ -243,7 +243,7 @@ S32 rootfs_replace_rcS()
     S8  buffer[1024];
     S8  path[] = "/etc/init.d/rcS";
 
-    fd = open(path , O_RDONLY);
+    fd = open(path , O_RDWR);
     if(fd < 0) {
         HLP_ERROR(HLP_MOD_COMMON, "open %s error! errno=%d:%s", path, errno, strerror(errno));
         return -1;
@@ -292,7 +292,7 @@ S32 hlp_rootfs_init()
         return -1;
     if(rootfs_replace_rcS() < 0)
         return -1;
-    
+
     return 0;
 }
 

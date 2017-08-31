@@ -35,6 +35,8 @@ echo "${GREEN}Welcome to HiLinux.${NORMAL}"
 ## fs
 echo "Entering fs working directory"
 cd /root/HI3716/                    
-./autorun                                
+mkdir -p runlog
+sleep 2
+./hlp_switch
        
 

@@ -19,6 +19,7 @@ typedef struct _hlp_conf
     U32  total_count;  //test
     S8   keyword[32];
     S8   mount_path[128];
+    U32  isInit;
     
 }hlp_conf_t;
 
