@@ -30,7 +30,7 @@ S32 hlp_config_is_ok()
         return 0;
     }
 
-    if(g_hlp_conf.interval_time <= 3
+    if(g_hlp_conf.interval_time < 1
         || g_hlp_conf.interval_time > 30) {
         HLP_ERROR(HLP_MOD_CONFIG, "interval_time[%d] must be [3~30]!", \
             g_hlp_conf.poweron_duration);
@@ -38,7 +38,7 @@ S32 hlp_config_is_ok()
     }
 
     len = strlen(g_hlp_conf.keyword);
-    if(len<=0 && len>20)
+    if(len<=0 && len>40)
         return 0;
 
     g_hlp_conf.isInit = 1;
@@ -90,7 +90,7 @@ S32 hlp_config_load(S8 *conf_file)
             }else if(hlp_strcmp(option, "total_count") == 0) {
                 g_hlp_conf.total_count = value;
             }else if(hlp_strcmp(option, "keyword") == 0) {
-                sscanf(buffer, "%s %s", option, g_hlp_conf.keyword);
+                sscanf(buffer, "%s \"%s\"", option, g_hlp_conf.keyword);
             }
         }
         else

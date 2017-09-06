@@ -47,8 +47,10 @@ S32 hlp_switch_task_start()
         g_switch_task.current_count = 0;
         hlp_config_get(&g_config);
         keyword_set_detected(0);
+        hlp_power_switch_off();
+        sleep(1);
+        hlp_power_switch_on();
         hlp_serial_capture_start();
-    	hlp_power_switch_on();
         panel_led_show_number(0);
     	HLP_INFO(HLP_MOD_SWITCH, "test start! poweron.");
         return 0;
@@ -159,7 +161,7 @@ void* hlp_switch_thread(void *args)
             /* all done */
             if(switch_task->current_count == config->total_count)
             {
-                hlp_power_switch_off();
+                //hlp_power_switch_off();
                 hlp_buzzer_ring_ms(300);
                 hlp_switch_task_stop();
                 heartbeat_drop_count = 0;

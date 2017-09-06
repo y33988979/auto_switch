@@ -146,6 +146,7 @@ void* serial_thread(void *args)
     S8    buffer[2048];
     S8    filename[128];
     S8    mount_path[128];
+    S8    logs_path[128];
     logfile_t *logfile = NULL;
     hlp_conf_t config;
 
@@ -175,6 +176,8 @@ void* serial_thread(void *args)
             found = 0;
             hlp_config_get(&config);
             sprintf(filename, "%s/%s/%s_%03d.txt", config.mount_path, HLP_LOG_DIR, HLP_LOG_NAME_PREFIX, logfile_id++);
+            sprintf(logs_path, "%s/%s", config.mount_path, HLP_LOG_DIR);
+            hlp_get_new_filename(logs_path, filename);
             logfile = hlp_logfile_create(filename);
             if(logfile == NULL) {
                 usleep(100*1000);

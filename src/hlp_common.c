@@ -116,6 +116,75 @@ hlp_s32_t hlp_get_dir_file_num(hlp_s8_t *path)
 		return n;
 }
 
+hlp_s32_t hlp_get_filename_maxid_by_path(hlp_s8_t *path)
+{
+    struct dirent **namelist;
+	int i, n;
+    hlp_s8_t name_prefix[64];
+    hlp_s8_t maxid_filename[64];
+    hlp_s32_t logfile_id = 0;
+
+    if(!path)
+        return -1;
+    
+	n = scandir(path, &namelist, 0, alphasort);
+	if(n < 0)
+	{
+        HLP_ERROR(HLP_MOD_COMMON, "scandir error! path[%s], errno=%d:%s", path, errno, strerror(errno));
+	}
+    else
+	{
+		for (i=0; i<n; i++)
+		{
+		    if(hlp_strcmp(namelist[i]->d_name, ".") == 0
+              || hlp_strcmp(namelist[i]->d_name, "..") == 0) {
+                free(namelist[i]);
+                continue;
+            }
+
+            if(logfile_id == 0) {
+                if(hlp_strncmp(namelist[i]->d_name, HLP_LOG_NAME_PREFIX, \
+                strlen(HLP_LOG_NAME_PREFIX)) == 0){
+                    hlp_strcpy(maxid_filename, namelist[i]->d_name);
+                    logfile_id = atoi(maxid_filename+4);
+                }
+            }
+
+			free(namelist[i]);
+		}
+		free(namelist);
+	}
+     
+    return logfile_id;
+}
+
+hlp_s32_t hlp_get_new_filename(hlp_s8_t *path, hlp_s8_t *filename)
+{
+    struct dirent **namelist;
+	int i, n;
+    hlp_s8_t name_prefix[64];
+    hlp_s8_t maxid_filename[64];
+    hlp_s32_t logfile_id = 0;
+
+    logfile_id = hlp_get_filename_maxid_by_path(path);
+    if(logfile_id >= 0){
+        if(logfile_id == 0)
+            HLP_INFO(HLP_MOD_COMMON, "it seems not have log files in \"%s\" ", path);
+        sprintf(filename, "%s/%s_%03d.txt", path, HLP_LOG_NAME_PREFIX, logfile_id+1);
+        return 0;
+    }
+    else if(logfile_id == 0) {
+        
+        return 0;
+    }
+    else {
+        HLP_ERROR(HLP_MOD_COMMON, "can't parse logifle_id, filename=%s", maxid_filename);
+        return -1;
+    }
+        
+    return 0;
+}
+
 hlp_bool_t hlp_file_isexist(hlp_s8_t *path, hlp_s8_t *filename)
 {
 	struct dirent **namelist;
