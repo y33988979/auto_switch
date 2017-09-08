@@ -58,7 +58,6 @@ void hlp_serial_capture_start()
 
     /* cleanup logs */
     sprintf(logdir, "%s/%s", hlp_get_udisk_path(), HLP_LOG_DIR);
-    hlp_rmdir(logdir);
 
     serial_buffer_reset();
     /* flush uart */
@@ -175,7 +174,7 @@ void* serial_thread(void *args)
         if(logfile == NULL) {
             found = 0;
             hlp_config_get(&config);
-            sprintf(filename, "%s/%s/%s_%03d.txt", config.mount_path, HLP_LOG_DIR, HLP_LOG_NAME_PREFIX, logfile_id++);
+            printf("logs_path=-------====%s\n", config.mount_path);
             sprintf(logs_path, "%s/%s", config.mount_path, HLP_LOG_DIR);
             hlp_get_new_filename(logs_path, filename);
             logfile = hlp_logfile_create(filename);
@@ -187,7 +186,7 @@ void* serial_thread(void *args)
 
         memset(buffer, 0, sizeof(buffer));
         len = hlp_serial_read(buffer, sizeof(buffer));
-        if(len < 0){
+        if(len <= 0){
             usleep(200*1000);
             continue;
         }

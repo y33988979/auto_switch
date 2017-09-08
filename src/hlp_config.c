@@ -15,7 +15,8 @@ S32 hlp_config_print()
     HLP_INFO(HLP_MOD_CONFIG, "poweron_duration: %d", g_hlp_conf.poweron_duration);
     HLP_INFO(HLP_MOD_CONFIG, "interval_time: %d", g_hlp_conf.interval_time);
     HLP_INFO(HLP_MOD_CONFIG, "switch_count: %d", g_hlp_conf.total_count);
-    HLP_INFO(HLP_MOD_CONFIG, "keyword: %s", g_hlp_conf.keyword);
+    HLP_INFO(HLP_MOD_CONFIG, "keyword: \"%s\"", g_hlp_conf.keyword);
+    HLP_INFO(HLP_MOD_CONFIG, "mount_path: \"%s\"", g_hlp_conf.mount_path);
     return 0;
 }
 
@@ -62,7 +63,7 @@ S32 hlp_config_get_mount_path(S8 *mount_path)
 
 S32 hlp_config_load(S8 *conf_file)
 {
-    S32 n = 20;
+    S32 pos, n = 10;
     S32 value = 0;
     S8 option[1024];
     S8 buffer[1024];
@@ -89,8 +90,9 @@ S32 hlp_config_load(S8 *conf_file)
                 g_hlp_conf.interval_time = value;
             }else if(hlp_strcmp(option, "total_count") == 0) {
                 g_hlp_conf.total_count = value;
-            }else if(hlp_strcmp(option, "keyword") == 0) {
-                sscanf(buffer, "%s \"%s\"", option, g_hlp_conf.keyword);
+            }else if(hlp_strcmp(option, "keyword") == 0) {              
+                sscanf(buffer, "%s \"%[^\"]", option, g_hlp_conf.keyword);
+                pos = hlp_strlen("keyword") + 1;                
             }
         }
         else

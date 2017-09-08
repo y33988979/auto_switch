@@ -17,7 +17,7 @@ typedef struct _hlp_conf
     U32  poweron_duration;
     U32  interval_time;
     U32  total_count;  //test
-    S8   keyword[32];
+    S8   keyword[64];
     S8   mount_path[128];
     U32  isInit;
     

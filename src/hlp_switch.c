@@ -82,7 +82,7 @@ S32 hlp_switch_task_stop()
 	auto_test_start = HLP_FALSE;
     hlp_serial_capture_stop();
 	g_switch_task.end_time = hlp_time_ms();
-    HLP_INFO(HLP_MOD_SWITCH, "test stop! poweroff. take %d seconds", \
+    HLP_INFO(HLP_MOD_SWITCH, "test stop! take %d seconds", \
         (g_switch_task.end_time-g_switch_task.start_time)/1000);
     return 0;
 }
@@ -92,14 +92,20 @@ S32 hlp_switch_once_start(hlp_conf_t *config)
     hlp_power_switch_on();
     hlp_serial_capture_resume();
     keyword_set_detected(0);
+    return 0;
 }
 
 S32 hlp_switch_once_stop(hlp_conf_t *config)
 {
-    S32 found;
     hlp_power_switch_off();
     hlp_serial_capture_suspend();
+    return 0;
+}
 
+S32 hlp_switch_keyword_check(hlp_conf_t *config)
+{
+    S32 found;
+    
     /* find keyword in serial log */
     found = hlp_serial_find_keywork(NULL, config->keyword);
     if(found) {
@@ -108,7 +114,8 @@ S32 hlp_switch_once_stop(hlp_conf_t *config)
     }else {
         keyword_set_detected(0);
         HLP_INFO(HLP_MOD_SWITCH, "found not keyword! [%s]", config->keyword);
-    } 
+    }
+    return found;
 }
 
 void help_led_flashing()
@@ -150,7 +157,7 @@ void* hlp_switch_thread(void *args)
             && switch_task->current_time/1000 != 0)
         {
             panel_led_show_number(++switch_task->current_count);
-            hlp_switch_once_stop(config);
+            hlp_switch_keyword_check(config);
             if(!keyword_is_detected()) {
                 hlp_buzzer_ring_ms(1000);
                 hlp_switch_task_stop();
@@ -169,6 +176,7 @@ void* hlp_switch_thread(void *args)
             }
             else
             {
+                hlp_switch_once_stop(config);
                 heartbeat_drop_count = 0;
                 sleep(config->interval_time);
                 hlp_switch_once_start(config);

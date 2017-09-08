@@ -126,7 +126,8 @@ hlp_s32_t hlp_get_filename_maxid_by_path(hlp_s8_t *path)
 
     if(!path)
         return -1;
-    
+
+    printf("path====%s\n", path);
 	n = scandir(path, &namelist, 0, alphasort);
 	if(n < 0)
 	{
@@ -134,8 +135,10 @@ hlp_s32_t hlp_get_filename_maxid_by_path(hlp_s8_t *path)
 	}
     else
 	{
-		for (i=0; i<n; i++)
+	    i = n;
+		while(i--)
 		{
+		    printf("name=%s\n", namelist[i]->d_name);
 		    if(hlp_strcmp(namelist[i]->d_name, ".") == 0
               || hlp_strcmp(namelist[i]->d_name, "..") == 0) {
                 free(namelist[i]);
@@ -146,7 +149,8 @@ hlp_s32_t hlp_get_filename_maxid_by_path(hlp_s8_t *path)
                 if(hlp_strncmp(namelist[i]->d_name, HLP_LOG_NAME_PREFIX, \
                 strlen(HLP_LOG_NAME_PREFIX)) == 0){
                     hlp_strcpy(maxid_filename, namelist[i]->d_name);
-                    logfile_id = atoi(maxid_filename+4);
+                    HLP_INFO(HLP_MOD_COMMON, "maxid_filename: %s", maxid_filename);
+                    logfile_id = atoi(maxid_filename+strlen(HLP_LOG_NAME_PREFIX)+1);
                 }
             }
 
@@ -351,6 +355,30 @@ S32 rootfs_replace_rcS()
         return -1;
     }
 
+    close(fd);
+    return 0;
+}
+
+S32 rootfs_replace_profile()
+{
+    S32 fd;
+    S32 n;
+    S8  buffer[1024];
+    S8  path[] = "/etc/profile";
+
+    fd = open(path , O_RDWR);
+    if(fd < 0) {
+        HLP_ERROR(HLP_MOD_COMMON, "open %s error! errno=%d:%s", path, errno, strerror(errno));
+        return -1;
+    }
+
+    memset(buffer, 0, sizeof(buffer));
+    n = read(fd, buffer, sizeof(buffer));
+    if(n < 0) {
+        close(fd);
+        HLP_ERROR(HLP_MOD_COMMON, "read %s error! errno=%d:%s", path, errno, strerror(errno));
+        return -1;
+    }
     close(fd);
     return 0;
 }
