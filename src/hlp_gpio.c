@@ -14,6 +14,7 @@
 #define LED_INTERVAL_TIME  100000
 
 hlp_u8_t hlp_led_status = LED_LIGHT_BLANK;
+hlp_s32_t gpio_ctrl_cnt = 0;
 
 hlp_s32_t hlp_gpio_config(hlp_u32_t gpio_addr)
 {
@@ -66,6 +67,14 @@ hlp_s32_t hlp_gpio_write(hlp_u32_t gpioNO, hlp_u32_t gpio_value)
 	ret |= HI_UNF_GPIO_WriteBit(gpioNO, gpio_value);
 	//ret |= HI_UNF_GPIO_Close();
 	//printf("hlp_gpio_write ret=%d\n", ret);
+    gpio_ctrl_cnt++;
+    if(ret == 0)
+        HLP_INFO(HLP_MOD_ALL, "[%d]:GpioNo=%d, value=%d, ret=%d\n",\
+                gpio_ctrl_cnt, gpioNO, gpio_value, ret);
+    else
+        HLP_ERROR(HLP_MOD_ALL, "[%d]:GpioNo=%d, value=%d, ret=%d\n",\
+                gpio_ctrl_cnt, gpioNO, gpio_value, ret);
+
 	return ret;
 }
 
@@ -208,7 +217,7 @@ hlp_s32_t hlp_gpio_init()
     ret |= hlp_gpio_config(GPIO_BUZZER_ADDR);
     ret |= hlp_gpio_config(GPIO_GREEN_LED_ADDR);
     ret |= hlp_gpio_config(GPIO_RED_LED_ADDR);
-    
+
 	hlp_redled_off();
 	hlp_greenled_on();
 	hlp_buzzer_ringoff();
@@ -216,7 +225,7 @@ hlp_s32_t hlp_gpio_init()
 
     if(ret == 0)
         HLP_INFO(HLP_MOD_GPIO, "GPIO7_4 GPIO7_5 GPIO9_6 GPIO3_7 config success!");
-    
+
 	return ret?-1:0;
 }
 

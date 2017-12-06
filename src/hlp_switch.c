@@ -21,22 +21,22 @@ static work_status_e  work_status = STATUS_FREE;
 static U32 auto_test_start = 0;
 
 S32 hlp_switch_task_start()
-{   
+{
     S32 mount_ok;
     S32 config_ok;
-    
+
     if(auto_test_start == HLP_TRUE) {
         HLP_INFO(HLP_MOD_SWITCH, "test have already start!");
         return 0;
     }
 
     panel_led_show_default_enable(HLP_TRUE, 8);
-    
+
     mount_ok = hlp_udisk_mount_ok();
     config_ok = hlp_config_is_ok();
     if(mount_ok && !config_ok)
         udisk_plugin_handle();
-    
+
     config_ok = hlp_config_is_ok();
     if(mount_ok && config_ok) {
         auto_test_start = HLP_TRUE;
@@ -59,14 +59,14 @@ S32 hlp_switch_task_start()
         if(!mount_ok) {
             panel_led_show_string("disk");
             HLP_ERROR(HLP_MOD_SWITCH, "test start failed!\n please plugin udisk!");
-        }      
+        }
         else if(!config_ok){
             hlp_config_print();
             panel_led_show_string("conf");
             HLP_ERROR(HLP_MOD_SWITCH, "test start failed!\n please check config: %s!",\
             HLP_CONFIG_NAME);
         }
-            
+
         return -1;
     }
 }
@@ -78,6 +78,8 @@ S32 hlp_switch_task_stop()
         return 0;
     }
 
+    extern hlp_s32_t gpio_ctrl_cnt;
+    gpio_ctrl_cnt = 0;
     panel_led_show_default_enable(HLP_FALSE, 0);
 	auto_test_start = HLP_FALSE;
     hlp_serial_capture_stop();
@@ -105,7 +107,7 @@ S32 hlp_switch_once_stop(hlp_conf_t *config)
 S32 hlp_switch_keyword_check(hlp_conf_t *config)
 {
     S32 found;
-    
+
     /* find keyword in serial log */
     found = hlp_serial_find_keywork(NULL, config->keyword);
     if(found) {
@@ -142,7 +144,7 @@ void* hlp_switch_thread(void *args)
 	hlp_u16_t      heartbeat_drop_count = 0;
     hlp_conf_t    *config = &g_config;
 	switch_task_t   *switch_task = &g_switch_task;
-    	
+
 	while(1)
 	{
 		if(auto_test_start == HLP_FALSE)
@@ -150,8 +152,8 @@ void* hlp_switch_thread(void *args)
 			sleep(1);
 			continue;
 		}
-		
-        current_time = hlp_time_ms(); 
+
+        current_time = hlp_time_ms();
         switch_task->current_time = current_time-switch_task->start_time;
         if(switch_task->current_time/1000 % config->poweron_duration == 0 \
             && switch_task->current_time/1000 != 0)
@@ -191,10 +193,10 @@ void* hlp_switch_thread(void *args)
 			burnin_task->current_count, current_time);
 		printf("[DisplayTime]: hour=%d, min=%d\n", hour, min);
 		*/
-		
+
 		/* xx秒内未发生按键，显示拷机剩余次数 */
 		if(current_time - panel_last_key_time >= 5*1000)
-		{	
+		{
 		    #if 0
 			min = hlp_get_burnin_remainder_time_min();
 			hour = min / 60;
@@ -241,17 +243,19 @@ void* hlp_switch_thread(void *args)
     S8  *ptr = NULL;
     U32  last_time_ms;
     U32  time_ms;
-    
+
     memset(buffer, 0, sizeof(buffer));
     printf(SHELL);
+    HLP_INFO(HLP_MOD_ALL, SHELL);
     fflush(stdout);
 
     last_time_ms = hlp_time_ms();
     while(fgets(buffer, sizeof(buffer), stdin)) {
-        
+
         /* do nothing, print bash */
         if(buffer[0] == '\n') {
             printf(SHELL);
+            HLP_INFO(HLP_MOD_ALL, SHELL);
             fflush(stdout);
             continue;
         }
@@ -259,16 +263,18 @@ void* hlp_switch_thread(void *args)
         len = strlen(buffer);
         buffer[len-1] = '\0';
         len--;
-        printf("recv command: %s\n", buffer);
+        printf("recv command: \"%s\"\n", buffer);
+        HLP_INFO(HLP_MOD_ALL, "recv command: \"%s\"", buffer);
 
         time_ms = hlp_time_ms();
         if(time_ms - last_time_ms < HLP_COMMAND_INTERVAL_MIN) {
             last_time_ms = time_ms;
             printf("command speed so quick! min_interval=50ms\n");
+            HLP_INFO(HLP_MOD_ALL, "command speed so quick! min_interval=50ms");
             continue;
         }
         last_time_ms = time_ms;
-        
+
         if(strncmp(buffer, "poweron", 7) == 0) {
             hlp_power_switch_on();
         }else if(strncmp(buffer, "poweroff", 8) == 0) {
@@ -280,7 +286,9 @@ void* hlp_switch_thread(void *args)
         }else {
             /* other command */
             printf("error command!\n");
+            HLP_INFO(HLP_MOD_ALL, "error command!");
             printf("[Command #] ");
+            HLP_INFO(HLP_MOD_ALL, "[Command #] ");
             fflush(stdout);
         }
 
@@ -288,6 +296,7 @@ void* hlp_switch_thread(void *args)
 
     /* error */
     perror("fgets error:");
+    HLP_ERROR(HLP_MOD_ALL, "fgets error: %s", strerror(errno));
 }
 
 #endif //SERIAL_ANALYZE_SUPPORT
@@ -300,7 +309,7 @@ S32 hlp_switch_init()
         HLP_ERROR(HLP_MOD_SWITCH, "switch_thread create error! errno=%d:%s", errno, strerror(errno));
 		return -1;
     }
-    
+
     HLP_INFO(HLP_MOD_SWITCH, "switch_thread start success!");
 
     return 0;
